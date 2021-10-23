@@ -33,11 +33,13 @@ colnames(bip)[17] <- "year"
 bip <- bip %>% select(player, year, Current:Location)
 bip <- bip %>% left_join(re_subset, by = c("player", "year"))
 
-
+# Get the par gained data using the available dataframe
 par_Gained <- ParGainedData(sg, bip, current_tour, par)
 
+# get the stroke gained data
 stroke_gained <- StrokeGainedData(bip, sg, current_tour)
 
+# Join the two dataframes
 final_file <- par_Gained %>% inner_join(stroke_gained, by = c("player", "year")) %>% select(player, year, Posn, round_total, Current:Location, sgtot4:sgp_all, par34:Ss_all)
 
 final_file <- final_file %>% filter(round_total >= 10)
@@ -46,15 +48,12 @@ df_2021 <- subset(final_file, year == 2021)
 df <- subset(final_file, year !=2021)
 df <- df[!is.na(df$Posn),]
 
-
+# Export the data
 library(openxlsx)
 wb <- createWorkbook()
 addWorksheet(wb, sheetName = "Current")
 writeData(wb, sheet = "Current", x= df_2021)
 addWorksheet(wb, sheetName = "Historic")
 writeData(wb, sheet = "Historic", x= df)
-saveWorkbook(wb, "Tournament.xlsx", overwrite = TRUE)
+saveWorkbook(wb, file.path(bip_path, "Tournament.xlsx"), overwrite = TRUE)
 openXL("Tournament.xlsx")
-
-
-
