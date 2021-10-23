@@ -3,9 +3,14 @@ library(tidyverse)
 library(lubridate)
 library(quantmod)
 library(reshape2)
+file_functions = "C:/Users/Pastor/Desktop/Golf/Golf-Predictions-PGA-TOUR/R-script"
+source(file.path(file_functions, "ParGainedFunctions.R"))
+source(file.path(file_functions, "StrokeGainedFunctions.R"))
+
 
 current_tournament = "zozo" # tourtips path
 current_Event = "Zozo Championship" # data from master file
+
 
 # Masterfile from database
 file_path = "C:/Users/Pastor/Desktop/Golf/Macro/Masterfile"
