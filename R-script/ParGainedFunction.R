@@ -83,9 +83,9 @@ ParGainedData <- function(sg, bip, current_tour, par){
   
   year_tour <- Reduce(rbind, split(par_fil_long, ~tournament_count), accumulate = TRUE)
   
-  par_list <- vector(mode = "list", length = length_list)
+  par_list <- vector(mode = "list", length = length(year_tour))
   
-  for (i in 1:length(dates_tour)) {
+  for (i in 1:length(year_tour)) {
     par_list[[i]] <- year_tour[[i]] %>% group_by(player) %>% summarise(round_total = last(cum_sum_round),
                                                                        last_event = last(Event),
                                                                        year = last(year),

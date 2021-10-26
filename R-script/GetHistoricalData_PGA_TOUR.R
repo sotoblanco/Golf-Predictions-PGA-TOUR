@@ -4,12 +4,12 @@ library(lubridate)
 library(quantmod)
 library(reshape2)
 file_functions = "C:/Users/Pastor/Desktop/Golf/Golf-Predictions-PGA-TOUR/R-script"
-source(file.path(file_functions, "ParGainedFunctions.R"))
-source(file.path(file_functions, "StrokeGainedFunctions.R"))
+source(file.path(file_functions, "ParGainedFunction.R"))
+source(file.path(file_functions, "StrokeGainedFunction.R"))
 
 
-current_tournament = "zozo" # tourtips path
-current_Event = "Zozo Championship" # data from master file
+current_tournament = "Portugal" # tourtips path
+current_Event = "Portugal Masters" # data from master file
 
 
 # Masterfile from database
@@ -36,7 +36,7 @@ bip <- readxl::read_excel(file.path(bip_path, "tour_tips.xlsx"), na = c("", "-",
 colnames(bip)[1] <- "player"
 colnames(bip)[17] <- "year"
 bip <- bip %>% select(player, year, Current:Location)
-bip <- bip %>% left_join(re_subset, by = c("player", "year"))
+bip <- bip %>% left_join(current_tour, by = c("player", "year"))
 
 # Get the par gained data using the available dataframe
 par_Gained <- ParGainedData(sg, bip, current_tour, par)
@@ -61,4 +61,4 @@ writeData(wb, sheet = "Current", x= df_2021)
 addWorksheet(wb, sheetName = "Historic")
 writeData(wb, sheet = "Historic", x= df)
 saveWorkbook(wb, file.path(bip_path, "Tournament.xlsx"), overwrite = TRUE)
-openXL("Tournament.xlsx")
+openXL(file.path(bip_path, "Tournament.xlsx"))

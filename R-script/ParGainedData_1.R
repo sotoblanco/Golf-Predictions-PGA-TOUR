@@ -4,8 +4,8 @@ library(lubridate)
 library(quantmod)
 library(reshape2)
 
-current_tournament = "zozo" # tourtips path
-current_Event = "Zozo Championship" # data from master file
+current_tournament = "Portugal" # tourtips path
+current_Event = "Portugal Masters" # data from master file
 
 # Masterfile from database
 file_path = "C:/Users/Pastor/Desktop/Golf/Macro/Masterfile"
@@ -15,7 +15,6 @@ re_subset = subset(re, Event == current_Event)
 re_subset$year = year(re_subset$Date)
 re_subset$player <- paste(re_subset$FirstName, re_subset$Surname)
 current_tour <- re_subset %>% select(player, Date, year, Posn, Rd1, Rd2, Rd3, Rd4)
-
 
 par <- sqlFetch(con, 'ResultsPar345Table')
 par$player <- par$Player
@@ -74,9 +73,6 @@ par_filter <- par %>% select(player, year, Event, Date,
 # get data for only player that played this tournament before
 par_filter_merge <- players_df %>% inner_join(par_filter, by = c("player"))
 
-current_tour = subset(re, Event == current_tournament)
-current_tour$player = paste(current_tour$FirstName, current_tour$Surname)
-
 # subtract four days to get the information before the tournament given that this date is the day when the tournament ends
 
 par_fil <- par_filter_merge %>% group_by(player, Date) %>% summarise(across(c(year, Event, AvgP3PerPlayerR1:AvgSsPlayerR4), ~last(.,)))
@@ -119,9 +115,9 @@ par_fil_long <- dplyr::rename(par_fil_long, "par3" = "value")
 
 year_tour <- Reduce(rbind, split(par_fil_long, ~tournament_count), accumulate = TRUE)
 
-par_list <- vector(mode = "list", length = length_list)
+par_list <- vector(mode = "list", length = length(year_tour))
 
-for (i in 1:length(dates_tour)) {
+for (i in 1:length(year_tour)) {
   par_list[[i]] <- year_tour[[i]] %>% group_by(player) %>% summarise(round_total = last(cum_sum_round),
                                                                      last_event = last(Event),
                                                                      year = last(year),

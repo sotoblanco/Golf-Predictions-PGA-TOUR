@@ -97,7 +97,7 @@ year_tour <- Reduce(rbind, split(sg_fil_long, ~tournament_count), accumulate = T
 
 sg_list <- vector(mode = "list", length = length_list)
 
-for (i in 1:length(dates_tour)) {
+for (i in 1:length(year_tour)) {
   sg_list[[i]] <- year_tour[[i]] %>% group_by(player) %>% summarise(last_posn = last(Posn),
                                                                     round_total = last(cum_sum_round),
                                                                     last_event = last(Event),
