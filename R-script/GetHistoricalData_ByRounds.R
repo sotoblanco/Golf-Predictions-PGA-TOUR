@@ -18,7 +18,7 @@ Round = NA
 
 
 # Masterfile from database
-file_path = "C:/Users/Pastor/Desktop/Golf/Macro/Masterfile"
+file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
