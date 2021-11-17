@@ -9,8 +9,8 @@ library(data.table)
 #source(file.path(file_functions, "FunctionsStrokeGainedRounds.R"))
 
 
-current_tournament = "houston" # tourtips path
-current_Event = "Houston Open" # data from master file
+current_tournament = "RSM" # tourtips path
+current_Event = "RSM Classic" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -22,7 +22,7 @@ file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
-re_subset = subset(re, Event == "Houston Open")
+re_subset = subset(re, Event == current_Event)
 
 #re_subset = subset(re, Location == "Mexico")
 #re_subset = subset(re, Event == current_Event | Event == same_event)
@@ -58,7 +58,7 @@ sg$player <- paste(sg$FirstName, sg$Surname)
 sg$year <- year(sg$Date)
 
 # Bip stats downloaded from tourtips and use the excel macro to get a single file
-bip_path = sprintf("C:/Users/Pastor/Desktop/Golf/%s", current_tournament)
+bip_path = sprintf("D:/Golf/%s", current_tournament)
 bip <- readxl::read_excel(file.path(bip_path, "tour_tips.xlsx"), na = c("", "-", "NaN"), guess_max = 10000)
 colnames(bip)[1] <- "player"
 colnames(bip)[17] <- "year"
@@ -156,6 +156,7 @@ if (!is.na(Round)) {
 sg_Gained <- sg_Gained %>% distinct(player, year, Event, Date, variable ,.keep_all = TRUE)
 par_Gained <- par_Gained %>% distinct(player, year, Event, Date, variable ,.keep_all = TRUE)
 
+sg_Gained[sg_Gained==0] <- NA
 
 year_tour <- Reduce(rbind, split(sg_Gained, ~tournament_count), accumulate = TRUE)
 
@@ -167,84 +168,84 @@ for (i in 1:length(year_tour)) {
                                                                     last_event = last(Event),
                                                                     year = last(year),
                                                                     
-                                                                    sgtot4 = mean(tail(sgtot, 4) ,  na.rm=TRUE),
-                                                                    sgtot8 = mean(tail(sgtot, 8) ,  na.rm=TRUE),
-                                                                    sgtot12 = mean(tail(sgtot, 12) ,  na.rm=TRUE),
-                                                                    sgtot24 = mean(tail(sgtot, 24) ,  na.rm=TRUE),
-                                                                    sgtot36 = mean(tail(sgtot, 36) ,  na.rm=TRUE),
-                                                                    sgtot50 = mean(tail(sgtot, 50) ,  na.rm=TRUE),
-                                                                    sgtot75 = mean(tail(sgtot, 75) ,  na.rm=TRUE),
-                                                                    sgtot100 = mean(tail(sgtot, 100) ,  na.rm=TRUE),
+                                                                    sgtot4 = mean(last(na.omit(sgtot), 4)),
+                                                                    sgtot8 = mean(last(na.omit(sgtot), 8)),
+                                                                    sgtot12 = mean(last(na.omit(sgtot), 12)),
+                                                                    sgtot24 = mean(last(na.omit(sgtot), 24)),
+                                                                    sgtot36 = mean(last(na.omit(sgtot), 36)),
+                                                                    sgtot50 = mean(last(na.omit(sgtot), 50)),
+                                                                    sgtot75 = mean(last(na.omit(sgtot), 75)),
+                                                                    sgtot100 = mean(last(na.omit(sgtot), 100)),
                                                                     sgtot_all = mean(sgtot, na.rm = TRUE),
                                                                     
-                                                                    sgt2g4 = mean(tail(sgt2g, 4) ,  na.rm=TRUE),
-                                                                    sgt2g8 = mean(tail(sgt2g, 8) ,  na.rm=TRUE),
-                                                                    sgt2g12 = mean(tail(sgt2g, 12) ,  na.rm=TRUE),
-                                                                    sgt2g24 = mean(tail(sgt2g, 24) ,  na.rm=TRUE),
-                                                                    sgt2g36 = mean(tail(sgt2g, 36) ,  na.rm=TRUE),
-                                                                    sgt2g50 = mean(tail(sgt2g, 50) ,  na.rm=TRUE),
-                                                                    sgt2g75 = mean(tail(sgt2g, 75) ,  na.rm=TRUE),
-                                                                    sgt2g100 = mean(tail(sgt2g, 100) ,  na.rm=TRUE),
+                                                                    sgt2g4 = mean(last(na.omit(sgt2g), 4)),
+                                                                    sgt2g8 = mean(last(na.omit(sgt2g), 8)),
+                                                                    sgt2g12 = mean(last(na.omit(sgt2g), 12)),
+                                                                    sgt2g24 = mean(last(na.omit(sgt2g), 24)),
+                                                                    sgt2g36 = mean(last(na.omit(sgt2g), 36)),
+                                                                    sgt2g50 = mean(last(na.omit(sgt2g), 50)),
+                                                                    sgt2g75 = mean(last(na.omit(sgt2g), 75)),
+                                                                    sgt2g100 = mean(last(na.omit(sgt2g), 100)),
                                                                     sgt2g_all = mean(sgt2g, na.rm = TRUE),
                                                                     
-                                                                    sgtee4 = mean(tail(sgtee, 4) ,  na.rm=TRUE),
-                                                                    sgtee8 = mean(tail(sgtee, 8) ,  na.rm=TRUE),
-                                                                    sgtee12 = mean(tail(sgtee, 12) ,  na.rm=TRUE),
-                                                                    sgtee24 = mean(tail(sgtee, 24) ,  na.rm=TRUE),
-                                                                    sgtee36 = mean(tail(sgtee, 36) ,  na.rm=TRUE),
-                                                                    sgtee50 = mean(tail(sgtee, 50) ,  na.rm=TRUE),
-                                                                    sgtee75 = mean(tail(sgtee, 75) ,  na.rm=TRUE),
-                                                                    sgtee100 = mean(tail(sgtee, 100) ,  na.rm=TRUE),
+                                                                    sgtee4 = mean(last(na.omit(sgtee), 4)),
+                                                                    sgtee8 = mean(last(na.omit(sgtee), 8)),
+                                                                    sgtee12 = mean(last(na.omit(sgtee), 12)),
+                                                                    sgtee24 = mean(last(na.omit(sgtee), 24)),
+                                                                    sgtee36 = mean(last(na.omit(sgtee), 36)),
+                                                                    sgtee50 = mean(last(na.omit(sgtee), 50)),
+                                                                    sgtee75 = mean(last(na.omit(sgtee), 75)),
+                                                                    sgtee100 = mean(last(na.omit(sgtee), 100)),
                                                                     sgtee_all = mean(sgtee, na.rm = TRUE),
                                                                     
-                                                                    sg_bs4 = mean(tail(sg_bs, 4) ,  na.rm=TRUE),
-                                                                    sg_bs8 = mean(tail(sg_bs, 8) ,  na.rm=TRUE),
-                                                                    sg_bs12 = mean(tail(sg_bs, 12) ,  na.rm=TRUE),
-                                                                    sg_bs24 = mean(tail(sg_bs, 24) ,  na.rm=TRUE),
-                                                                    sg_bs36 = mean(tail(sg_bs, 36) ,  na.rm=TRUE),
-                                                                    sg_bs50 = mean(tail(sg_bs, 50) ,  na.rm=TRUE),
-                                                                    sg_bs75 = mean(tail(sg_bs, 75) ,  na.rm=TRUE),
-                                                                    sg_bs100 = mean(tail(sg_bs, 100) ,  na.rm=TRUE),
+                                                                    sg_bs4 = mean(last(na.omit(sg_bs), 4)),
+                                                                    sg_bs8 = mean(last(na.omit(sg_bs), 8)),
+                                                                    sg_bs12 = mean(last(na.omit(sg_bs), 12)),
+                                                                    sg_bs24 = mean(last(na.omit(sg_bs), 24)),
+                                                                    sg_bs36 = mean(last(na.omit(sg_bs), 36)),
+                                                                    sg_bs50 = mean(last(na.omit(sg_bs), 50)),
+                                                                    sg_bs75 = mean(last(na.omit(sg_bs), 75)),
+                                                                    sg_bs100 = mean(last(na.omit(sg_bs), 100)),
                                                                     sg_bs_all = mean(sg_bs, na.rm = TRUE),
                                                                     
-                                                                    sg_sg4 = mean(tail(sg_sg, 4) ,  na.rm=TRUE),
-                                                                    sg_sg8 = mean(tail(sg_sg, 8) ,  na.rm=TRUE),
-                                                                    sg_sg12 = mean(tail(sg_sg, 12) ,  na.rm=TRUE),
-                                                                    sg_sg24 = mean(tail(sg_sg, 24) ,  na.rm=TRUE),
-                                                                    sg_sg36 = mean(tail(sg_sg, 36) ,  na.rm=TRUE),
-                                                                    sg_sg50 = mean(tail(sg_sg, 50) ,  na.rm=TRUE),
-                                                                    sg_sg75 = mean(tail(sg_sg, 75) ,  na.rm=TRUE),
-                                                                    sg_sg100 = mean(tail(sg_sg, 100) ,  na.rm=TRUE),
+                                                                    sg_sg4 = mean(last(na.omit(sg_sg), 4)),
+                                                                    sg_sg8 = mean(last(na.omit(sg_sg), 8)),
+                                                                    sg_sg12 = mean(last(na.omit(sg_sg), 12)),
+                                                                    sg_sg24 = mean(last(na.omit(sg_sg), 24)),
+                                                                    sg_sg36 = mean(last(na.omit(sg_sg), 36)),
+                                                                    sg_sg50 = mean(last(na.omit(sg_sg), 50)),
+                                                                    sg_sg75 = mean(last(na.omit(sg_sg), 75)),
+                                                                    sg_sg100 = mean(last(na.omit(sg_sg), 100)),
                                                                     sg_sg_all = mean(sg_sg, na.rm = TRUE),
                                                                     
-                                                                    sgatg4 = mean(tail(sgatg, 4) ,  na.rm=TRUE),
-                                                                    sgatg8 = mean(tail(sgatg, 8) ,  na.rm=TRUE),
-                                                                    sgatg12 = mean(tail(sgatg, 12) ,  na.rm=TRUE),
-                                                                    sgatg24 = mean(tail(sgatg, 24) ,  na.rm=TRUE),
-                                                                    sgatg36 = mean(tail(sgatg, 36) ,  na.rm=TRUE),
-                                                                    sgatg50 = mean(tail(sgatg, 50) ,  na.rm=TRUE),
-                                                                    sgatg75 = mean(tail(sgatg, 75) ,  na.rm=TRUE),
-                                                                    sgatg100 = mean(tail(sgatg, 100) ,  na.rm=TRUE),
+                                                                    sgatg4 = mean(last(na.omit(sgatg), 4)),
+                                                                    sgatg8 = mean(last(na.omit(sgatg), 8)),
+                                                                    sgatg12 = mean(last(na.omit(sgatg), 12)),
+                                                                    sgatg24 = mean(last(na.omit(sgatg), 24)),
+                                                                    sgatg36 = mean(last(na.omit(sgatg), 36)),
+                                                                    sgatg50 = mean(last(na.omit(sgatg), 50)),
+                                                                    sgatg75 = mean(last(na.omit(sgatg), 75)),
+                                                                    sgatg100 = mean(last(na.omit(sgatg), 100)),
                                                                     sgatg_all = mean(sgatg, na.rm = TRUE),
                                                                     
-                                                                    sgapp4 = mean(tail(sgapp, 4) ,  na.rm=TRUE),
-                                                                    sgapp8 = mean(tail(sgapp, 8) ,  na.rm=TRUE),
-                                                                    sgapp12 = mean(tail(sgapp, 12) ,  na.rm=TRUE),
-                                                                    sgapp24 = mean(tail(sgapp, 24) ,  na.rm=TRUE),
-                                                                    sgapp36 = mean(tail(sgapp, 36) ,  na.rm=TRUE),
-                                                                    sgapp50 = mean(tail(sgapp, 50) ,  na.rm=TRUE),
-                                                                    sgapp75 = mean(tail(sgapp, 75) ,  na.rm=TRUE),
-                                                                    sgapp100 = mean(tail(sgapp, 100) ,  na.rm=TRUE),
+                                                                    sgapp4 = mean(last(na.omit(sgapp), 4)),
+                                                                    sgapp8 = mean(last(na.omit(sgapp), 8)),
+                                                                    sgapp12 = mean(last(na.omit(sgapp), 12)),
+                                                                    sgapp24 = mean(last(na.omit(sgapp), 24)),
+                                                                    sgapp36 = mean(last(na.omit(sgapp), 36)),
+                                                                    sgapp50 = mean(last(na.omit(sgapp), 50)),
+                                                                    sgapp75 = mean(last(na.omit(sgapp), 75)),
+                                                                    sgapp100 = mean(last(na.omit(sgapp), 100)),
                                                                     sgapp_all = mean(sgapp, na.rm = TRUE),
                                                                     
-                                                                    sgp4 = mean(tail(sgp, 4) ,  na.rm=TRUE),
-                                                                    sgp8 = mean(tail(sgp, 8) ,  na.rm=TRUE),
-                                                                    sgp12 = mean(tail(sgp, 12) ,  na.rm=TRUE),
-                                                                    sgp24 = mean(tail(sgp, 24) ,  na.rm=TRUE),
-                                                                    sgp36 = mean(tail(sgp, 36) ,  na.rm=TRUE),
-                                                                    sgp50 = mean(tail(sgp, 50) ,  na.rm=TRUE),
-                                                                    sgp75 = mean(tail(sgp, 75) ,  na.rm=TRUE),
-                                                                    sgp100 = mean(tail(sgp, 100) ,  na.rm=TRUE),
+                                                                    sgp4 = mean(last(na.omit(sgp), 4)),
+                                                                    sgp8 = mean(last(na.omit(sgp), 8)),
+                                                                    sgp12 = mean(last(na.omit(sgp), 12)),
+                                                                    sgp24 = mean(last(na.omit(sgp), 24)),
+                                                                    sgp36 = mean(last(na.omit(sgp), 36)),
+                                                                    sgp50 = mean(last(na.omit(sgp), 50)),
+                                                                    sgp75 = mean(last(na.omit(sgp), 75)),
+                                                                    sgp100 = mean(last(na.omit(sgp), 100)),
                                                                     sgp_all = mean(sgp, na.rm = TRUE))
   
 }
@@ -389,6 +390,10 @@ df <- df %>% select(player:Rd4, score, Current:Location, sgtot4:Ss_all )
 
 df <- subset(df, year >= 2013)
 
+is.nan.data.frame <- function(x)
+  do.call(cbind, lapply(x, is.nan))
+
+df[is.nan(df)] <- NA
 
 # Export the data
 library(openxlsx)
