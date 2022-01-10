@@ -9,8 +9,8 @@ library(data.table)
 #source(file.path(file_functions, "FunctionsStrokeGainedRounds.R"))
 
 
-current_tournament = "RSM" # tourtips path
-current_Event = "RSM Classic" # data from master file
+current_tournament = "sony" # tourtips path
+current_Event = "Sony Open in Hawaii" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -29,7 +29,7 @@ re_subset = subset(re, Event == current_Event)
 
 
 re_subset$year = year(re_subset$Date)
-unique(re_subset$year)
+sort(unique(re_subset$year))
 unique(re_subset$Event)
 unique(re_subset$Course)
 unique(re_subset$Tour)
@@ -58,7 +58,7 @@ sg$player <- paste(sg$FirstName, sg$Surname)
 sg$year <- year(sg$Date)
 
 # Bip stats downloaded from tourtips and use the excel macro to get a single file
-bip_path = sprintf("D:/Golf/%s", current_tournament)
+bip_path = sprintf("D:/Golf/2022/%s", current_tournament)
 bip <- readxl::read_excel(file.path(bip_path, "tour_tips.xlsx"), na = c("", "-", "NaN"), guess_max = 10000)
 colnames(bip)[1] <- "player"
 colnames(bip)[17] <- "year"
@@ -154,6 +154,7 @@ if (!is.na(Round)) {
 ## Stroke gained data
 
 sg_Gained <- sg_Gained %>% distinct(player, year, Event, Date, variable ,.keep_all = TRUE)
+
 par_Gained <- par_Gained %>% distinct(player, year, Event, Date, variable ,.keep_all = TRUE)
 
 sg_Gained[sg_Gained==0] <- NA
@@ -162,11 +163,15 @@ year_tour <- Reduce(rbind, split(sg_Gained, ~tournament_count), accumulate = TRU
 
 sg_list <- vector(mode = "list", length = length(year_tour))
 
+dates_tour_2 <- sort(year(dates_tour))
+dates_tour_2[length(dates_tour_2)+1] <- 2022
+
 for (i in 1:length(year_tour)) {
   sg_list[[i]] <- year_tour[[i]] %>% group_by(player) %>% summarise(last_posn = last(Posn),
                                                                     round_total = last(cum_sum_round),
                                                                     last_event = last(Event),
                                                                     year = last(year),
+                                                                    date = last(tournament_count),
                                                                     
                                                                     sgtot4 = mean(last(na.omit(sgtot), 4)),
                                                                     sgtot8 = mean(last(na.omit(sgtot), 8)),
@@ -260,7 +265,9 @@ for (i in 1:length(year_tour_par)) {
   par_list[[i]] <- year_tour_par[[i]] %>% group_by(player) %>% summarise(round_total = last(cum_sum_round),
                                                                          last_event = last(Event),
                                                                          year = last(year),
+                                                                         date = last(tournament_count),
                                                                          
+
                                                                          par34 = mean(tail(par3, 4), na.rm=TRUE),
                                                                          par38 = mean(tail(par3, 8), na.rm=TRUE),
                                                                          par312 = mean(tail(par3, 12), na.rm=TRUE),
@@ -351,6 +358,8 @@ du_va <- file_par[dup_value,]
 
 #par_list_tm_2 <- par_list_tm %>% distinct(player, year, round_total, last_event, .keep_all = TRUE)
 par_list_tm_2 <- par_list_tm %>% distinct(player, year, .keep_all = TRUE)
+par_list_tm_2$year <- dates_tour_2[par_list_tm_2$date+1]
+
 
 file_par <- bip %>% left_join(par_list_tm_2, by = c("player", "year"))
 
@@ -362,9 +371,10 @@ file_par <- file_par %>% select(player, year, Posn, round_total, Rd1:Rd4, Curren
 #######
 # get the stroke gained data
 
-sg_list_tm <- sg_list %>% bind_rows %>% select(player, year, round_total, last_event, last_posn, sgtot4:sgp_all)
+sg_list_tm <- sg_list %>% bind_rows %>% select(player, year, date, round_total, last_event, last_posn, sgtot4:sgp_all)
 
 sg_list_tm_2 <- sg_list_tm %>% distinct(player, year, .keep_all = TRUE)
+sg_list_tm_2$year <- dates_tour_2[sg_list_tm_2$date+1]
 
 file_sg <- file_par %>% left_join(sg_list_tm_2, by = c("player", "year"))
 
@@ -374,8 +384,8 @@ file_sg <- file_sg %>% select(player:Location, sgtot4:sgp_all, par34:Ss_all)
 final_file <- file_sg
 final_file <- file_sg %>% filter(round_total.x >= 10)
 final_file <- final_file[order(final_file$year, final_file$player),]
-df_2021 <- subset(final_file, year == 2021)
-df <- subset(final_file, year !=2021)
+df_2021 <- subset(final_file, year == 2022)
+df <- subset(final_file, year !=2022)
 df <- df[!is.na(df$Posn),]
 df <- df[!(df$Posn == "w"),]
 
