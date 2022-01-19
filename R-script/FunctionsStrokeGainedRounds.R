@@ -67,7 +67,7 @@ StrokeGainedData <- function(bip, sg, current_tour){
   
 }
 
-StrokeGainedRounds <- function(sg_fil_long, bip){
+StrokeGainedRounds <- function(sg_fil_long){
   
   year_tour <- Reduce(rbind, split(sg_fil_long, ~tournament_count), accumulate = TRUE)
   
@@ -160,14 +160,8 @@ StrokeGainedRounds <- function(sg_fil_long, bip){
                                                                       sgp_all = tryCatch(last(mean(sgp, na.rm = TRUE)), error=function(e) NA))
     
   }
+  return(sg_list)
   
-  sg_list_tm <- sg_list %>% bind_rows %>% select(player, year, round_total, last_event, last_posn, sgtot4:sgp_all)
-  
-  sg_list_tm_2 <- sg_list_tm %>% distinct(player, year, round_total, last_event, .keep_all = TRUE)
-  
-  file_sg <- bip %>% inner_join(sg_list_tm_2, by = c("player", "year"))
-  
-  file_sg <- file_sg %>% select(player, year, Posn, sgtot4:sgp_all)
 }
 
 

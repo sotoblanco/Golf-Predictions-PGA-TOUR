@@ -8,9 +8,10 @@ library(data.table)
 #source(file.path(file_functions, "FunctionsPairGainedRounds.R"))
 #source(file.path(file_functions, "FunctionsStrokeGainedRounds.R"))
 
+#course_current = "PGA West Stadium Course"
 
-current_tournament = "sony" # tourtips path
-current_Event = "Sony Open in Hawaii" # data from master file
+current_tournament = "american" # tourtips path
+current_Event = "The American Express" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -22,7 +23,8 @@ file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
-re_subset = subset(re, Event == current_Event)
+#re_subset = subset(re, Event == current_Event)
+re_subset = subset(re, Course == "PGA West (Stadium)")
 
 #re_subset = subset(re, Location == "Mexico")
 #re_subset = subset(re, Event == current_Event | Event == same_event)
@@ -382,7 +384,7 @@ file_sg <- file_sg %>% select(player:Location, sgtot4:sgp_all, par34:Ss_all)
 
 ####
 final_file <- file_sg
-final_file <- file_sg %>% filter(round_total.x >= 10)
+#final_file <- file_sg %>% filter(round_total.x >= 10)
 final_file <- final_file[order(final_file$year, final_file$player),]
 df_2021 <- subset(final_file, year == 2022)
 df <- subset(final_file, year !=2022)
@@ -392,6 +394,7 @@ df <- df[!(df$Posn == "w"),]
 df$Rd2[is.na(df$Rd2)] <- 80
 df$Rd3[is.na(df$Rd3)] <- 80
 df$Rd4[is.na(df$Rd4)] <- 80
+
 df$score <- df$Rd1 + df$Rd2 + df$Rd3 + df$Rd4
 
 df <- df %>% group_by(year) %>% mutate(Posn = rank(score, ties.method = "min"))
@@ -404,6 +407,10 @@ is.nan.data.frame <- function(x)
   do.call(cbind, lapply(x, is.nan))
 
 df[is.nan(df)] <- NA
+
+df_2021$score = NA
+
+df_2021 <- df_2021 %>% select(player:Rd4, score, Current:Location, sgtot4:Ss_all )
 
 # Export the data
 library(openxlsx)

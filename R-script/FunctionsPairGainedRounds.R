@@ -83,7 +83,7 @@ ParGainedData <- function(sg, bip, current_tour, par){
   
 }
 
-pariGainedRound <- function(par_fil_long, bip){
+pariGainedRound <- function(par_fil_long){
   
   year_tour <- Reduce(rbind, split(par_fil_long, ~tournament_count), accumulate = TRUE)
   
@@ -174,17 +174,6 @@ pariGainedRound <- function(par_fil_long, bip){
                                                                        Ss100 = tryCatch(last(rollapply(Ss, 100, mean, na.rm=TRUE)), error=function(e) NA),
                                                                        Ss_all = tryCatch(last(mean(Ss, na.rm = TRUE)), error=function(e) NA))
   }
-  
-  par_list_tm <- par_list %>% bind_rows %>% select(player, year, round_total, last_event, par34:Ss_all)
-  
-  par_list_tm_2 <- par_list_tm %>% distinct(player, year, round_total, last_event, .keep_all = TRUE)
-  
-  file_par <- bip %>% inner_join(par_list_tm_2, by = c("player", "year"))
-  
-  file_par$Top20 <-  ifelse(is.na(file_par$Top20)==TRUE, file_par$Top25, file_par$Top20)
-  file_par$Top25 <- NULL
-  
-  file_par <- file_par %>% select(player, year, Posn, round_total, Current:Location, par34:Ss_all)
-
+  return(par_list)
 }
 
