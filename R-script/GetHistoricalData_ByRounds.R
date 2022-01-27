@@ -10,8 +10,8 @@ library(data.table)
 
 #course_current = "PGA West Stadium Course"
 
-current_tournament = "american" # tourtips path
-current_Event = "The American Express" # data from master file
+current_tournament = "dubai" # tourtips path
+current_Event = "Dubai Desert Classic" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -23,8 +23,8 @@ file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
-#re_subset = subset(re, Event == current_Event)
-re_subset = subset(re, Course == "PGA West (Stadium)")
+re_subset = subset(re, Event == current_Event)
+#re_subset = subset(re, Course == "PGA West (Stadium)")
 
 #re_subset = subset(re, Location == "Mexico")
 #re_subset = subset(re, Event == current_Event | Event == same_event)
@@ -353,10 +353,8 @@ for (i in 1:length(year_tour_par)) {
 
 ######
 
-par_list_tm <- par_list %>% bind_rows %>% select(player, year, round_total, last_event, par34:Ss_all)
+par_list_tm <- par_list %>% bind_rows %>% select(player, year,date, round_total, last_event, par34:Ss_all)
 
-dup_value <- duplicated(file_par[,1:5])
-du_va <- file_par[dup_value,]
 
 #par_list_tm_2 <- par_list_tm %>% distinct(player, year, round_total, last_event, .keep_all = TRUE)
 par_list_tm_2 <- par_list_tm %>% distinct(player, year, .keep_all = TRUE)
@@ -369,6 +367,9 @@ file_par$Top20 <-  ifelse(is.na(file_par$Top20)==TRUE, file_par$Top25, file_par$
 file_par$Top25 <- NULL
 
 file_par <- file_par %>% select(player, year, Posn, round_total, Rd1:Rd4, Current:Location, par34:Ss_all)
+
+dup_value <- duplicated(file_par[,1:5])
+du_va <- file_par[dup_value,]
 
 #######
 # get the stroke gained data
