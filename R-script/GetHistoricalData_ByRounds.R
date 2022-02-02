@@ -10,8 +10,8 @@ library(data.table)
 
 #course_current = "PGA West Stadium Course"
 
-current_tournament = "dubai" # tourtips path
-current_Event = "Dubai Desert Classic" # data from master file
+current_tournament = "pebble" # tourtips path
+current_Event = "AT&T Pebble Beach National Pro-Am" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
