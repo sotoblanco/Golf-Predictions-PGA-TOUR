@@ -8,14 +8,13 @@ library(data.table)
 #source(file.path(file_functions, "FunctionsPairGainedRounds.R"))
 #source(file.path(file_functions, "FunctionsStrokeGainedRounds.R"))
 
-#course_current = "PGA West Stadium Course"
+#course_current = "Riviera CC"
 
-current_tournament = "pebble" # tourtips path
-current_Event = "AT&T Pebble Beach National Pro-Am" # data from master file
+current_tournament = "honda" # tourtips path
+current_Event = "Honda Classic" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
-
 
 
 # Masterfile from database
@@ -23,7 +22,8 @@ file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
-re_subset = subset(re, Event == current_Event)
+re_subset = re[startsWith(re$Course, "PGA National"),]
+#re_subset = subset(re, Event == starts_with("R"))
 #re_subset = subset(re, Course == "PGA West (Stadium)")
 
 #re_subset = subset(re, Location == "Mexico")
@@ -36,6 +36,7 @@ unique(re_subset$Event)
 unique(re_subset$Course)
 unique(re_subset$Tour)
 
+re_subset = subset(re_subset, year >= 2016)
 
 re_subset$player <- paste(re_subset$FirstName, re_subset$Surname)
 current_tour <- re_subset %>% select(player, Date, year, Posn, Rd1, Rd2, Rd3, Rd4)
