@@ -1,11 +1,11 @@
 ###### Data preparation ####
-setwd("D:/Golf/2022/honda")
+setwd("D:/Golf/2022/arnold")
 library(readxl)
-df <- read_excel("Honda Classic_NA.xlsx", sheet = "Historic", na = c("", "-", "NaN")) # read the spreadsheet including using na for blank and - spaces
+df <- read_excel("Arnold Palmer Invitational_NA.xlsx", sheet = "Historic", na = c("", "-", "NaN")) # read the spreadsheet including using na for blank and - spaces
 library(janitor)
 df <- clean_names(df)
 library(dplyr)
-df_2022 <- read_excel("Honda Classic_NA.xlsx",sheet = "Current", na = c("", "-", "NaN"))
+df_2022 <- read_excel("Arnold Palmer Invitational_NA.xlsx",sheet = "Current", na = c("", "-", "NaN"))
 df_2022 <- clean_names(df_2022)
 df_2022[names(df)]
 df <- rbind(df_2022,df)
