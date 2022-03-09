@@ -1,11 +1,11 @@
 ###### Data preparation ####
-setwd("D:/Golf/2022/arnold")
+setwd("D:/Golf/2022/players")
 library(readxl)
-df <- read_excel("Arnold Palmer Invitational_NA.xlsx", sheet = "Historic", na = c("", "-", "NaN")) # read the spreadsheet including using na for blank and - spaces
+df <- read_excel("The Players Championship_NA.xlsx", sheet = "Historic", na = c("", "-", "NaN")) # read the spreadsheet including using na for blank and - spaces
 library(janitor)
 df <- clean_names(df)
 library(dplyr)
-df_2022 <- read_excel("Arnold Palmer Invitational_NA.xlsx",sheet = "Current", na = c("", "-", "NaN"))
+df_2022 <- read_excel("The Players Championship_NA.xlsx",sheet = "Current", na = c("", "-", "NaN"))
 df_2022 <- clean_names(df_2022)
 df_2022[names(df)]
 df <- rbind(df_2022,df)
@@ -100,6 +100,12 @@ ppgir <- grep("ppgir", names(df))
 Xs_seq <- rev(seq_along(ppgir))
 ppgir <- as.matrix(df[ppgir]) %*% matrix(Xs_seq, ncol = 1) / sum(Xs_seq)
 df$ppgir <- ppgir
+
+ppr <- grep("ppr", names(df))
+Xs_seq <- rev(seq_along(ppr))
+ppr <- as.matrix(df[ppr]) %*% matrix(Xs_seq, ncol = 1) / sum(Xs_seq)
+df$ppr <- ppr
+
 
 ss <- grep("ss", names(df))
 Xs_seq <- rev(seq_along(ss))

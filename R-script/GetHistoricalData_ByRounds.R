@@ -10,8 +10,8 @@ library(data.table)
 
 #course_current = "Riviera CC"
 
-current_tournament = "arnold" # tourtips path
-current_Event = "Arnold Palmer Invitational" # data from master file
+current_tournament = "players" # tourtips path
+current_Event = "The Players Championship" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -22,11 +22,11 @@ file_path = "D:/Golf/Macro/Masterfile"
 con <- odbcConnectAccess(file.path(file_path, 'Men_Master - TwoTours.mdb'))
 re <- sqlFetch(con, 'Results')
 
-re_subset = re[startsWith(re$Course, "Bay"),]
-#re_subset = subset(re, Event == starts_with("R"))
+#re_subset = re[startsWith(re$Course, "Ponte"),]
+re_subset = subset(re, Event == current_Event)
 #re_subset = subset(re, Course == "PGA West (Stadium)")
 
-#re_subset = subset(re, Location == "Mexico")
+#re_subset = subset(re, Location == "Florida")
 #re_subset = subset(re, Event == current_Event | Event == same_event)
 
 
@@ -54,6 +54,7 @@ par_filter <- par %>% select(player, year, Event, Date,
                              AvgDAPerPlayerR1, AvgDAPerPlayerR2, AvgDAPerPlayerR3, AvgDAPerPlayerR4,
                              AvgGirPerPlayerR1, AvgGirPerPlayerR2, AvgGirPerPlayerR3, AvgGirPerPlayerR4,
                              AvgPpGirPerPlayerR1, AvgPpGirPerPlayerR2, AvgPpGirPerPlayerR3, AvgPpGirPerPlayerR4,
+                             AvgPprPerPlayerR1, AvgPprPerPlayerR2, AvgPprPerPlayerR3, AvgPprPerPlayerR4,
                              AvgSsPlayerR1, AvgSsPlayerR2, AvgSsPlayerR3, AvgSsPlayerR4)
 
 sg <- sqlFetch(con, 'StrokesGained')
@@ -110,7 +111,7 @@ sg_Data <- sg_Data[!(sg_Data$Posn == "w" | is.na(sg_Data$Posn)),]
 dates_tour <- c(min(sg_filter$Date), unique(current_tour$Date) - days(4))
 
 sg_patt <- c("sgtot", "sgt2g", "sgtee", "sgatg", "sgapp", "sgp")
-par_patt <- c("AvgP3", "AvgP4", "AvgP5","AvgDD", "AvgDA", "AvgG", "AvgPp",  "AvgS")
+par_patt <- c("AvgP3", "AvgP4", "AvgP5","AvgDD", "AvgDA", "AvgG", "AvgPp", "AvgPpr", "AvgS")
 
 sg_fil_long <- data.table::melt(sg_Data, measure = patterns(sg_patt))
 
@@ -118,7 +119,7 @@ colnames(sg_fil_long)[8:13] <- sg_patt
 
 par_fil_long <- data.table::melt(par_Data, measure = patterns(par_patt))
 
-colnames(par_fil_long)[6:13] <- c("par3", "par4", "par5", "DD", "DA", "Gir", "Ppgir", "Ss")
+colnames(par_fil_long)[6:14] <- c("par3", "par4", "par5", "DD", "DA", "Gir", "Ppgir", "Ppr", "Ss")
 
 sg_fil_long <- sg_fil_long %>% group_by(player) %>% arrange(Date, .by_group = TRUE) %>% 
   drop_na(sgtot) %>% mutate(rounds_play = 1,
@@ -340,6 +341,17 @@ for (i in 1:length(year_tour_par)) {
                                                                          Ppgir75 = mean(tail(Ppgir, 75), na.rm=TRUE),
                                                                          Ppgir100 = mean(tail(Ppgir, 100), na.rm=TRUE),
                                                                          Ppgir_all = mean(Ppgir, na.rm = TRUE),
+                                                                         
+                                                                         Ppr4 = mean(tail(Ppr, 4), na.rm=TRUE),
+                                                                         Ppr8 = mean(tail(Ppr, 8), na.rm=TRUE),
+                                                                         Ppr12 = mean(tail(Ppr, 12), na.rm=TRUE),
+                                                                         Ppr24 = mean(tail(Ppr, 24), na.rm=TRUE),
+                                                                         Ppr36 = mean(tail(Ppr, 36), na.rm=TRUE),
+                                                                         Ppr50 = mean(tail(Ppr, 50), na.rm=TRUE),
+                                                                         Ppr75 = mean(tail(Ppr, 75), na.rm=TRUE),
+                                                                         Ppr100 = mean(tail(Ppr, 100), na.rm=TRUE),
+                                                                         Ppr_all = mean(Ppr, na.rm = TRUE),
+                                                                         
                                                                          
                                                                          Ss4 = mean(tail(Ss, 4), na.rm=TRUE),
                                                                          Ss8 = mean(tail(Ss, 8), na.rm=TRUE),
