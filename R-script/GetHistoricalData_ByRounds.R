@@ -10,8 +10,8 @@ library(data.table)
 
 #course_current = "Riviera CC"
 
-current_tournament = "players" # tourtips path
-current_Event = "The Players Championship" # data from master file
+current_tournament = "valspar" # tourtips path
+current_Event = "Valspar Championship" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
