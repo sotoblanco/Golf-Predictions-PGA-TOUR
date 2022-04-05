@@ -10,8 +10,8 @@ library(data.table)
 
 #course_current = "Texas"
 
-current_tournament = "texas" # tourtips path
-current_Event = "Texas Open" # data from master file
+current_tournament = "masters" # tourtips path
+current_Event = "The Masters" # data from master file
 #same_event = "OHL Classic"
 ## Filter by rounds NA if you want the whole data, 1 just round 1, 2 round 2, and 3 round3
 Round = NA
@@ -438,3 +438,5 @@ addWorksheet(wb, sheetName = "Historic")
 writeData(wb, sheet = "Historic", x= df)
 saveWorkbook(wb, file.path(bip_path, tour), overwrite = TRUE)
 openXL(file.path(bip_path, tour))
+
+rm(list = ls())

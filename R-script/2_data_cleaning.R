@@ -1,7 +1,7 @@
 ###### Data preparation ####
-setwd("D:/Golf/2022/texas")
+setwd("D:/Golf/2022/masters")
 library(readxl)
-tournament = "Texas Open_NA.xlsx"
+tournament = "The Masters_NA.xlsx"
 df <- read_excel(tournament, sheet = "Historic", na = c("", "-", "NaN")) # read the spreadsheet including using na for blank and - spaces
 library(janitor)
 df <- clean_names(df)
@@ -124,3 +124,5 @@ write.csv(test_2022, "test_2022.csv", row.names = FALSE)
 
 train_2022 <- df %>% filter(year != 2022)
 write.csv(train_2022, "train_2022.csv", row.names = FALSE)
+
+rm(list = ls())
